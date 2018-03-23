@@ -26,7 +26,7 @@ exports.ip = () => {
 
 exports.sha256 = (str) => {
   if (str) {
-    return crypto.createHmac("sha256", config.hmacKey).update(str).digest("hex");
+    return crypto.createHmac("sha256", config.tokenSecret).update(str).digest("hex");
   } else {
     return "";
   }

@@ -2,6 +2,6 @@
   "plugins": ["node"],
   "extends": ["eslint:recommended", "plugin:node/recommended"],
   "rules": {
-    "node/exports-style": ["error", "exports", {"allowBatchAssign": true}]
+    "node/exports-style": ["off", "exports", {"allowBatchAssign": true}]
   }
 }

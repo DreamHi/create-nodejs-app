@@ -1,38 +1,36 @@
 {
-  "appenders": [
-    {
+  "appenders": {
+    "console": {
       "type": "console"
     },
-    {
+    "application": {
       "type": "dateFile",
-      "category": "application",
       "filename": "logs/application.log",
       "pattern": "-yyyyMMdd"
     },
-    {
-      "type":     "dateFile",
-      "category": "error",
+    "error": {
+      "type": "dateFile",
       "filename": "logs/error.log",
-      "pattern":  "-yyyyMMdd"
+      "pattern": "-yyyyMMdd",
+      "category": "error"
     },
-    {
-      "type":     "dateFile",
-      "category": "access",
+    "access": {
+      "type": "dateFile",
       "filename": "logs/access.log",
-      "pattern":  "-yyyyMMdd"
+      "pattern": "-yyyyMMdd",
+      "category": "access"
     },
-    {
-      "type":     "dateFile",
-      "category": "operation",
+    "operation": {
+      "type": "dateFile",
       "filename": "logs/operation.log",
-      "pattern":  "-yyyyMMdd"
+      "pattern": "-yyyyMMdd",
+      "category": "operation"
     }
-  ],
-
-  "levels": {
-    "application": "DEBUG",
-    "error": "ERROR",
-    "access": "INFO",
-    "operation": "INFO"
+  },
+  "categories": {
+    "default": { "appenders": [ "console", "application"], "level": "DEBUG" },
+    "error": { "appenders": [ "error"], "level": "DEBUG" },
+    "access": { "appenders": [ "access"], "level": "INFO" },
+    "operation": { "appenders": [ "operation"], "level": "INFO" }
   }
 }

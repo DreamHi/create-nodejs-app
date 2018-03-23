@@ -8,6 +8,8 @@ exports.MOD_FIND_MAX_LIMIT = 1000;
 exports.VALID = 1;
 exports.INVALID = 0;
 
+// db database
+exports.DB_NAME_TEMPLATE       = "template";
 // db collection
 exports.SCHEMA_USER            = "User";
 exports.SCHEMA_TOKEN           = "Token";

@@ -7,8 +7,8 @@ const app           = require("../../../../config/app");
 const tokenSchema   = require("../models/mod_token");
 
 const { tokenLength,  tokenExpires } = app;
-const { DB_NAME_HIONE, SCHEMA_TOKEN } = constant;
-const ModelToken = new Model(DB_NAME_HIONE, SCHEMA_TOKEN, tokenSchema);
+const { DB_NAME_TEMPLATE, SCHEMA_TOKEN } = constant;
+const ModelToken = new Model(DB_NAME_TEMPLATE, SCHEMA_TOKEN, tokenSchema);
 
 exports.create = (user, callback) => {
   const token = crypto.randomBytes(tokenLength).toString("hex");
@@ -21,7 +21,7 @@ exports.create = (user, callback) => {
 };
 
 exports.verify = (token, callback) => {
-  let condition = { token };
+  const condition = { token };
   ModelToken.getOne(condition, "", (err, result) => {
     if (err || !result) {
       return callback(new createError.Unauthorized());
@@ -37,7 +37,7 @@ exports.verify = (token, callback) => {
 };
 
 exports.update = (token, callback) => {
-  let condition = { token };
+  const condition = { token };
   const expires = new Date(Date.now() + tokenExpires);
   const obj = { expires };
   ModelToken.updateByCondition(condition, obj, {}, (err, result) => {
@@ -51,7 +51,7 @@ exports.update = (token, callback) => {
 };
 
 exports.delete = (token, callback) => {
-  let condition = { token };
+  const condition = { token };
   ModelToken.delete(condition, (err) => {
     if (err) {
       return callback(new createError.InternalServerError());
@@ -61,4 +61,3 @@ exports.delete = (token, callback) => {
     }
   })
 };
-

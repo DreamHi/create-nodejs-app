@@ -1,5 +1,4 @@
 const Log4js     = require("log4js");
-const constant   = require("./constant");
 const helper     = require("./helper");
 
 Log4js.configure(process.cwd() + "/config/log4js.json");
@@ -55,7 +54,7 @@ function formatOpLog (action, message, user="") {
   let host = helper.ip();
   let name = "";
   if (user) {
-    name = `${user.name || ""}(${user.userName || ""})`
+    name = `${user.name || ""}(${user.email || ""})`
   }
 
   return `[${host}] [${name}] [${action}] [${message}]`;
@@ -67,7 +66,7 @@ function formatLog(message, user="") {
   let line = lineNo();
   let name = "";
   if (user) {
-    name = `${user.name || ""}(${user.userName || ""})`
+    name = `${user.name || ""}(${user.email || ""})`
   }
   return `${message} [${name}] [${host}] [${file}] [${line}]`;
 }

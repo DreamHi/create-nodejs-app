@@ -1,4 +1,3 @@
-const express        = require("src/core/express");
 const helmet         = require("helmet");
 const compression    = require("compression");
 const bodyParser     = require("body-parser");
@@ -7,8 +6,6 @@ const morgan         = require("morgan");
 const responseTime   = require("response-time");
 const i18n           = require("i18n");
 const cors           = require("cors");
-const config         = require("../../config/app");
-const db             = require("./db");
 const log4js         = require("log4js");
 const log            = require("./logger");
 

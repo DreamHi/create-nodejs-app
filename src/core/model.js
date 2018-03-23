@@ -1,5 +1,4 @@
 const constant  = require("./constant");
-const mongoose  = require("mongoose");
 const db        = require("./db");
 
 class Model {

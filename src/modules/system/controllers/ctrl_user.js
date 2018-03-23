@@ -9,13 +9,13 @@ const log         = require("../../../core/logger");
 const helper      = require("../../../core/helper");
 const constant    = require("../../../core/constant");
 
-const { DB_NAME_HIONE, SCHEMA_USER } = constant;
+const { DB_NAME_TEMPLATE, SCHEMA_USER } = constant;
 
 exports.simpleLogin = (req, res, callback) => {
 
   log.info("user.simpleLogin() start.");
 
-  const ModelUser = new Model(DB_NAME_HIONE, SCHEMA_USER, UserSchema);
+  const ModelUser = new Model(DB_NAME_TEMPLATE, SCHEMA_USER, UserSchema);
 
   let { name, pass } = req.body;
   let obj  = {
