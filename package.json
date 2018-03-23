@@ -1,0 +1,38 @@
+{
+  "name": "create-nodejs-app",
+  "version": "0.1.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test-mocha": "node test/unit/TestLoader.js",
+    "test-unit": "istanbul cover --dir=test/reports/UnitCoverage test/unit/TestLoader.js",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DreamHi/create-nodejs-app.gitt"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DreamHi/create-nodejs-app/issues"
+  },
+  "homepage": "https://github.com/DreamHi/create-nodejs-app#readme",
+  "dependencies": {
+    "async": "2.6.0",
+    "express": "4.16.3",
+    "http-errors": "1.6.2",
+    "i18n": "0.8.3",
+    "joi": "13.1.2",
+    "lodash": "4.17.5",
+    "log4js": "2.5.3",
+    "mongoose": "5.0.11"
+  },
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-plugin-node": "^6.0.1"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  }
+}
