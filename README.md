@@ -1,6 +1,6 @@
 # template-nodejs-app
 基于Nodejs的后端服务器模版，只提供RestAPI服务。适用于前后端分离的项目。  
-前端模版请参考[template-react-app]()
+前端模版请参考[template-react-app](https://github.com/DreamHi/template-react-app)
 
 ## 环境要求
 
