@@ -10,25 +10,23 @@ const helper      = require("../../../core/helper");
 const constant    = require("../../../core/constant");
 
 const { DB_NAME_TEMPLATE, SCHEMA_USER } = constant;
+const ModelUser = new Model(DB_NAME_TEMPLATE, SCHEMA_USER, UserSchema);
 
 exports.simpleLogin = (req, res, callback) => {
 
   log.info("user.simpleLogin() start.");
-
-  const ModelUser = new Model(DB_NAME_TEMPLATE, SCHEMA_USER, UserSchema);
-
-  let { name, pass } = req.body;
-  let obj  = {
+  const { name, pass } = req.body;
+  const obj  = {
     user: {},
     token: ""
   };
 
-  let checkParam = (done) => {
-    let schema = Joi.object({
+  const checkParam = (done) => {
+    const schema = Joi.object({
       name: Joi.string().trim().invalid([":", ";", ",", "\""]).max(40).required(),
       pass: Joi.string().max(40).required()
     });
-    let output = Joi.validate(req.body, schema, {allowUnknown: true});
+    const output = Joi.validate(req.body, schema, {allowUnknown: true});
     if (output.error) {
       log.debug("user.simpleLogin().checkParam() error.");
       return done(new createError.BadRequest(__("modules.system.user.login.error")));
@@ -36,10 +34,10 @@ exports.simpleLogin = (req, res, callback) => {
     done(undefined);
   };
 
-  let authUser = (done) => {
-    let sha256Pass = helper.sha256(pass);
-    let condition = { userId: name, "valid": 1};
-    let projection = "userId name password email";
+  const authUser = (done) => {
+    const sha256Pass = helper.sha256(pass);
+    const condition = { email: name, "valid": 1 };
+    const projection = "email name password";
 
     ModelUser.getOne(condition, projection, (err, result) => {
       if (err) {
@@ -47,7 +45,7 @@ exports.simpleLogin = (req, res, callback) => {
         log.error(err);
         return done(new createError.InternalServerError(__("common.db.search.error")));
       } else {
-        if (!result || (result.password != sha256Pass)) {
+        if (!result || (result.password !== sha256Pass)) {
           log.debug("user.simpleLogin().authUser() error.");
           return done(new createError.BadRequest(__("modules.system.user.login.error")));
         } else {
@@ -59,14 +57,13 @@ exports.simpleLogin = (req, res, callback) => {
     });
   };
 
-  let createToke = (done) => {
+  const createToke = (done) => {
     Token.create(obj.user, (err, result) => {
       if (err || !result) {
         log.debug("user.simpleLogin().createToke() error.");
         return done(new createError.InternalServerError(__("common.system.error")))
       } else {
         obj.token = result.token;
-        obj.tokenType = constant.TOKENTYPE;
         log.info("user.simpleLogin() end.");
         log.operation("simpleLogin", "login success!", obj.user);
         return done(undefined, obj);
