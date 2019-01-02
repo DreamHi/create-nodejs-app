@@ -20,6 +20,8 @@ exports.error = (message, user) => {
 
 exports.operation = (action, message, user) => operation.info(formatOpLog(action, message, user));
 
+exports.screen = (action, from, to, user) => operation.info(screenOpLog(action, from, to, user));
+
 exports.access = access;
 
 function stack(self) {
@@ -38,6 +40,10 @@ function stack(self) {
   return result;
 }
 
+function getIP() {
+  return helper.ip();
+}
+
 function lineNo() {
   return stack(stack)[3].getLineNumber();
 }
@@ -46,27 +52,25 @@ function fileName() {
   return stack(stack)[3].getFileName();
 }
 
-// function functionName() {
-//   return stack(stack)[3].getFunctionName();
-// }
-
-function formatOpLog (action, message, user="") {
-  let host = helper.ip();
+function getName(user) {
   let name = "";
   if (user) {
-    name = `${user.name || ""}(${user.email || ""})`
+    name = `${user.name || ""}(${user.userName || ""})`
   }
-
-  return `[${host}] [${name}] [${action}] [${message}]`;
+  return name;
 }
 
-function formatLog(message, user="") {
-  let host = helper.ip();
+function formatOpLog (action, message, user) {
+  return `[${getIP()}] [${getName(user)}] [${action}] [${message}]`;
+}
+
+function screenOpLog (action, from, to, user) {
+  return `[${getIP()}] [${getName(user)}] [${from}] [${action}] [${to}]`;
+}
+
+function formatLog(message, user) {
+  const host = helper.ip();
   let file = fileName();
   let line = lineNo();
-  let name = "";
-  if (user) {
-    name = `${user.name || ""}(${user.email || ""})`
-  }
-  return `${message} [${name}] [${host}] [${file}] [${line}]`;
+  return `${message} [${getName(user)}] [${host}] [${file}] [${line}]`;
 }
