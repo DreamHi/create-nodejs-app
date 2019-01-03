@@ -1,3 +1,4 @@
+const createError = require("http-errors");
 const constant  = require("./constant");
 const db        = require("./db");
 
@@ -7,54 +8,95 @@ class Model {
     this.m = conn.model(name, scheme);
   }
 
-  create(obj, callback) {
-    new this.m(obj).save(callback);
+  async create(obj) {
+    try {
+      return await new this.m(obj).save();
+    } catch (err) {
+      throw new createError.InternalServerError(__("common.db.create.error"));
+    }
   }
 
-  remove(id, obj = {}, callback) {
-    obj.valid = constant.INVALID;
-    this.m.findByIdAndUpdate(id, obj, callback)
+  async remove(id, obj = {}) {
+    try {
+      obj.valid = constant.INVALID;
+      return await this.m.findByIdAndUpdate(id, obj).exec();
+    } catch (err) {
+      throw new createError.InternalServerError(__("common.db.delete.error"));
+    }
   }
 
-  removeByCondition(condition, obj = {}, options, callback) {
-    obj.valid = constant.INVALID;
-    this.m.update(condition, obj, options, callback);
+  async removeByCondition(condition, obj = {}, options) {
+    try {
+      obj.valid = constant.INVALID;
+      return await this.m.update(condition, obj, options).exec();
+    } catch (err) {
+      throw new createError.InternalServerError(__("common.db.delete.error"));
+    }
   }
 
-  delete(condition, callback) {
-    this.m.remove(condition, callback);
+  async delete(condition) {
+    try {
+      return await  this.m.remove(condition).exec();
+    } catch (err) {
+      throw new createError.InternalServerError(__("common.db.delete.error"));
+    }
   }
 
-  update(id, obj, callback) {
-    this.m.findByIdAndUpdate(id, obj, callback);
+  async update(id, obj) {
+    try {
+      return await this.m.findByIdAndUpdate(id, obj).exec();
+    } catch (err) {
+      throw new createError.InternalServerError(__("common.db.update.error"));
+    }
   }
 
-  updateByCondition(condition, obj, options, callback) {
-    this.m.update(condition, obj, options, callback);
+  async updateByCondition(condition, obj, options) {
+    try {
+      return await this.m.update(condition, obj, options).exec();
+    } catch (err) {
+      throw new createError.InternalServerError(__("common.db.update.error"));
+    }
   }
 
-  get(id, projection = "", callback) {
-    this.m.findById(id, projection, callback);
+  async get(id, projection = "") {
+    this.m.findById(id, projection);
+    try {
+      return await this.m.findById(id, projection).exec();
+    } catch (err) {
+      throw new createError.InternalServerError(__("common.db.search.error"));
+    }
   }
 
-  getOne(condition, projection = "", callback) {
-    this.m.findOne(condition, projection, callback);
+  async getOne(condition, projection = "") {
+    try {
+      return await this.m.findOne(condition, projection).exec();
+    } catch (err) {
+      throw new createError.InternalServerError(__("common.db.search.error"));
+    }
   }
 
-  count(condition, callback) {
-    this.m.count(condition, callback);
+  async count(condition) {
+    try {
+      return await this.m.count(condition).exec();
+    } catch (err) {
+      throw new createError.InternalServerError(__("common.db.search.error"));
+    }
   }
 
-  getList(condition, projection,
-          skip = constant.MOD_FIND_DEFAULT_SKIP,
-          limit = constant.MOD_FIND_DEFAULT_LIMIT,
-          sort = "", callback) {
-    this.m.find(condition)
-      .select(projection)
-      .skip(skip)
-      .limit(limit)
-      .sort(sort)
-      .exec(callback);
+  async getList(condition, projection,
+                skip = constant.MOD_FIND_DEFAULT_SKIP,
+                limit = constant.MOD_FIND_DEFAULT_LIMIT,
+                sort = "") {
+    try {
+      return await  this.m.find(condition)
+        .select(projection)
+        .skip(skip)
+        .limit(limit)
+        .sort(sort)
+        .exec();
+    } catch (err) {
+      throw new createError.InternalServerError(__("common.db.search.error"));
+    }
   }
 }
 

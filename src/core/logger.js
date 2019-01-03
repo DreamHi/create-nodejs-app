@@ -55,7 +55,7 @@ function fileName() {
 function getName(user) {
   let name = "";
   if (user) {
-    name = `${user.name || ""}(${user.userName || ""})`
+    name = `${user.name || ""}(${user.fullName || ""})`
   }
   return name;
 }

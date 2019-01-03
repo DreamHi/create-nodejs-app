@@ -1,5 +1,3 @@
-const async       = require("async");
-const _           = require("lodash");
 const createError = require("http-errors");
 const Joi         = require("joi");
 const Token       = require("./ctrl_token");
@@ -9,84 +7,60 @@ const log         = require("../../../core/logger");
 const helper      = require("../../../core/helper");
 const constant    = require("../../../core/constant");
 
-const { DB_NAME_TEMPLATE, SCHEMA_USER } = constant;
-const ModelUser = new Model(DB_NAME_TEMPLATE, SCHEMA_USER, UserSchema);
+const { DB_NAME_TEMPLATE, SCHEMA_USER, VALID } = constant;
+const UserModel = new Model(DB_NAME_TEMPLATE, SCHEMA_USER, UserSchema);
 
-exports.simpleLogin = (req, res, callback) => {
+const loginValidate = (obj) => {
+  const schema = Joi.object({
+    name: Joi.string().trim().regex(/^[a-zA-Z0-9_-]{4,30}$/).required(),
+    pass: Joi.string().trim().max(30).required()
+  });
+
+  const output = Joi.validate(obj, schema, { allowUnknown: true });
+  if (output.error) {
+    throw new createError.BadRequest(__("modules.system.user.login.error"));
+  }
+};
+
+exports.simpleLogin = async (req) => {
 
   log.info("user.simpleLogin() start.");
   const { name, pass } = req.body;
-  const obj  = {
-    user: {},
-    token: ""
-  };
 
-  const checkParam = (done) => {
-    const schema = Joi.object({
-      name: Joi.string().trim().invalid([":", ";", ",", "\""]).max(40).required(),
-      pass: Joi.string().max(40).required()
-    });
-    const output = Joi.validate(req.body, schema, {allowUnknown: true});
-    if (output.error) {
-      log.debug("user.simpleLogin().checkParam() error.");
-      return done(new createError.BadRequest(__("modules.system.user.login.error")));
+  loginValidate(req.body);
+
+  const sha256Pass = helper.sha256(pass);
+  const condition = { name, "valid": VALID };
+  const projection = "email name password";
+
+  try {
+    const user = await UserModel.getOne(condition, projection);
+    if (!user || user.password !== sha256Pass) {
+      throw new createError.BadRequest(__("modules.system.user.login.error"));
     }
-    done(undefined);
-  };
 
-  const authUser = (done) => {
-    const sha256Pass = helper.sha256(pass);
-    const condition = { email: name, "valid": 1 };
-    const projection = "email name password";
+    const obj  = { user: {}, token: "" };
+    const tokenObj = await Token.create(obj.user);
+    delete user._doc.password;
 
-    ModelUser.getOne(condition, projection, (err, result) => {
-      if (err) {
-        log.debug("user.simpleLogin().authUser() error.");
-        log.error(err);
-        return done(new createError.InternalServerError(__("common.db.search.error")));
-      } else {
-        if (!result || (result.password !== sha256Pass)) {
-          log.debug("user.simpleLogin().authUser() error.");
-          return done(new createError.BadRequest(__("modules.system.user.login.error")));
-        } else {
-          delete result._doc.password;
-          obj.user = result;
-          return done(undefined);
-        }
-      }
-    });
-  };
-
-  const createToke = (done) => {
-    Token.create(obj.user, (err, result) => {
-      if (err || !result) {
-        log.debug("user.simpleLogin().createToke() error.");
-        return done(new createError.InternalServerError(__("common.system.error")))
-      } else {
-        obj.token = result.token;
-        log.info("user.simpleLogin() end.");
-        log.operation("simpleLogin", "login success!", obj.user);
-        return done(undefined, obj);
-      }
-    });
-  };
-
-  async.waterfall([checkParam, authUser, createToke], callback);
+    obj.user = user;
+    obj.token = tokenObj.token;
+    log.info("user.simpleLogin() end.");
+    log.operation("simpleLogin", "login success!", obj.user);
+    return obj;
+  } catch (err) {
+    throw err;
+  }
 };
 
-exports.logout = (req, res, callback) => {
+exports.logout = async (req) => {
 
   log.info("user.logout() start.", req.user);
-
-  Token.delete(req.token, (err) => {
-    if (err) {
-      log.debug("user.logout() error.");
-      log.error(err);
-      return callback(new createError.InternalServerError(__("common.system.error")))
-    } else {
-      log.info("user.logout() end.", req.user);
-      log.operation("logout", "logout success!", req.user);
-      return callback(undefined);
-    }
-  });
+  try {
+    await Token.delete(req.token);
+    log.info("user.logout() end.", req.user);
+    log.operation("logout", "logout success!", req.user);
+  } catch (err) {
+    throw err;
+  }
 };

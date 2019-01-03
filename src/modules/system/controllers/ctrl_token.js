@@ -1,7 +1,6 @@
 const crypto        = require("crypto");
 const createError   = require("http-errors");
 const Model         = require("../../../core/model");
-const log           = require("../../../core/logger");
 const constant      = require("../../../core/constant");
 const app           = require("../../../../config/app");
 const tokenSchema   = require("../models/mod_token");
@@ -10,54 +9,41 @@ const { tokenLength,  tokenExpires } = app;
 const { DB_NAME_TEMPLATE, SCHEMA_TOKEN } = constant;
 const ModelToken = new Model(DB_NAME_TEMPLATE, SCHEMA_TOKEN, tokenSchema);
 
-exports.create = (user, callback) => {
+exports.create = async (user) => {
   const token = crypto.randomBytes(tokenLength).toString("hex");
   const expires = new Date(Date.now() + tokenExpires);
   const obj = { token, user, expires };
-  ModelToken.create(obj, (err, result) => {
-    log.operation("create", "token has been created successfully!", {});
-    callback(err, result);
-  })
+  return await ModelToken.create(obj);
 };
 
-exports.verify = (token, callback) => {
-  const condition = { token };
-  ModelToken.getOne(condition, "", (err, result) => {
-    if (err || !result) {
-      return callback(new createError.Unauthorized());
-    } else {
-      if (result.expires < new Date()) {
-        return callback(new createError.Unauthorized());
-      } else {
-        log.operation("verify", "token has been verified successfully!", {});
-        return callback(undefined, result);
-      }
+exports.verify = async (token) => {
+  try {
+    const condition = { token };
+    const tokenObj = await ModelToken.getOne(condition, "");
+    if (!tokenObj || tokenObj.expires < new Date()) {
+      throw new createError.Unauthorized();
     }
-  })
+    return tokenObj;
+  } catch (err) {
+    throw err;
+  }
 };
 
-exports.update = (token, callback) => {
+exports.update = async (token) => {
   const condition = { token };
   const expires = new Date(Date.now() + tokenExpires);
   const obj = { expires };
-  ModelToken.updateByCondition(condition, obj, {}, (err, result) => {
-    if (err || !result) {
-      return callback(new createError.Unauthorized());
-    } else {
-      log.operation("update", "token has been updated successfully!", {});
-      return callback(undefined);
+  try {
+    const tokenObj = await ModelToken.updateByCondition(condition, obj, {});
+    if (!tokenObj) {
+      throw new createError.Unauthorized();
     }
-  })
+  } catch (err) {
+    throw err;
+  }
 };
 
-exports.delete = (token, callback) => {
+exports.delete = async (token) => {
   const condition = { token };
-  ModelToken.delete(condition, (err) => {
-    if (err) {
-      return callback(new createError.InternalServerError());
-    } else {
-      log.operation("delete", "token has been deleted successfully!", {});
-      return callback(undefined);
-    }
-  })
+  await ModelToken.delete(condition);
 };
