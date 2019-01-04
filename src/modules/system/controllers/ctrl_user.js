@@ -39,12 +39,12 @@ exports.simpleLogin = async (req) => {
       throw new createError.BadRequest(__("modules.system.user.login.error"));
     }
 
+    delete user._doc.password;
     const obj  = { user: {}, token: "" };
     obj.user = user;
     const tokenObj = await Token.create(obj.user);
-    delete user._doc.password;
-
     obj.token = tokenObj.token;
+    
     log.info("user.simpleLogin() end.");
     log.operation("simpleLogin", "login success!", obj.user);
     return obj;
