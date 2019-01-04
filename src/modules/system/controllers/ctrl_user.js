@@ -40,10 +40,10 @@ exports.simpleLogin = async (req) => {
     }
 
     const obj  = { user: {}, token: "" };
+    obj.user = user;
     const tokenObj = await Token.create(obj.user);
     delete user._doc.password;
 
-    obj.user = user;
     obj.token = tokenObj.token;
     log.info("user.simpleLogin() end.");
     log.operation("simpleLogin", "login success!", obj.user);
