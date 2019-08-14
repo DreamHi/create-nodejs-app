@@ -3,5 +3,5 @@ exports.sendSuccess = (res, result) => {
 };
 
 exports.sendError = (res, err) => {
-  res.status(err.status).json({ success: false, errorCode: err.status, errorMessage: err.message});
+  res.status(err.status).json({ success: false, errorCode: err.status, errorMessage: err.message });
 };

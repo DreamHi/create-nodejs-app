@@ -13,7 +13,12 @@ exports.create = async (user) => {
   const token = crypto.randomBytes(tokenLength).toString("hex");
   const expires = new Date(Date.now() + tokenExpires);
   const obj = { token, user, expires };
-  return await ModelToken.create(obj);
+  try {
+    const result = await ModelToken.create(obj);
+    return result;
+  } catch (err) {
+    throw err;
+  }
 };
 
 exports.verify = async (token) => {
@@ -45,5 +50,10 @@ exports.update = async (token) => {
 
 exports.delete = async (token) => {
   const condition = { token };
-  await ModelToken.delete(condition);
+  try {
+    const result = await ModelToken.delete(condition);
+    return result;
+  } catch (err) {
+    throw err;
+  }
 };

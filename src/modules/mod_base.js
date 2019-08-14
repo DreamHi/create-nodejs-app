@@ -11,7 +11,7 @@ const Base = {
   createdAt:        { type: Date,   description: "作成日" },
   createdBy:        { type: Mixed,  description: "作成者" },
   updatedAt:        { type: Date,   description: "更新日" },
-  updatedBy:        { type: Mixed,  description: "更新者" }
+  updatedBy:        { type: Mixed,  description: "更新者" },
 };
 
 function BaseSchema() {

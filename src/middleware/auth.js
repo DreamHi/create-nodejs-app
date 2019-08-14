@@ -4,7 +4,6 @@ const config      = require("../../config/app");
 const ctrlToken   = require("../modules/system/controllers/ctrl_token");
 
 exports.authenticate = async (req, res, next) => {
-
   const token  = req.headers[config.tokenHeader] || "";
 
   if (!token) {

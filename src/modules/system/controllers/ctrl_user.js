@@ -13,7 +13,7 @@ const UserModel = new Model(DB_NAME_TEMPLATE, SCHEMA_USER, UserSchema);
 const loginValidate = (obj) => {
   const schema = Joi.object({
     name: Joi.string().trim().regex(/^[a-zA-Z0-9_-]{4,30}$/).required(),
-    pass: Joi.string().trim().max(30).required()
+    pass: Joi.string().trim().max(30).required(),
   });
 
   const output = Joi.validate(obj, schema, { allowUnknown: true });
@@ -23,14 +23,13 @@ const loginValidate = (obj) => {
 };
 
 exports.simpleLogin = async (req) => {
-
   log.info("user.simpleLogin() start.");
   const { name, pass } = req.body;
 
   loginValidate(req.body);
 
   const sha256Pass = helper.sha256(pass);
-  const condition = { name, "valid": VALID };
+  const condition = { name, valid: VALID };
   const projection = "email name password";
 
   try {
@@ -54,7 +53,6 @@ exports.simpleLogin = async (req) => {
 };
 
 exports.logout = async (req) => {
-
   log.info("user.logout() start.", req.user);
   try {
     await Token.delete(req.token);

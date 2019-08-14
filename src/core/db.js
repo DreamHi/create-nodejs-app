@@ -1,14 +1,13 @@
+const mongoose = require("mongoose");
 const log      = require("./logger");
 const config   = require("../../config/db");
-const mongoose = require("mongoose");
 
-let connections = {};
+const connections = {};
 
 exports.createConnection = (code) => {
-
   if (!connections[code]) {
     log.warn("Create a connection.");
-    let dbURL = exports.getDBURL(code);
+    const dbURL = exports.getDBURL(code);
     mongoose.Promise = global.Promise;
     connections[code] = mongoose.createConnection(dbURL);
   }
@@ -16,7 +15,6 @@ exports.createConnection = (code) => {
 };
 
 exports.getDBURL = (db) => {
-
   const { host, port, user, pass, dbName } = config.connections[db];
   let url = null;
 

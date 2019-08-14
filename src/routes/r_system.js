@@ -1,7 +1,8 @@
 const express    = require("express");
-const router     = express.Router();
 const response   = require("../core/response");
 const ctrlUser   = require("../modules/system/controllers/ctrl_user");
+
+const router     = express.Router();
 
 router.get("/logout", async (req, res) => {
   try {

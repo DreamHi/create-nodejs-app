@@ -1,4 +1,5 @@
 const SchemaCommon    = require("../../mod_base");
+
 const { BaseSchema } = SchemaCommon;
 
 const User = new BaseSchema({

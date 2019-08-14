@@ -1,11 +1,9 @@
 const express      = require("express");
 const config       = require("./config/app");
 const log          = require("./src/core/logger");
+
 const app          = express();
 const { port }     = config;
-
-// 0. 环境变量check
-// TODO:
 
 // 1. 服务器设置
 app.set("view cache", false);
@@ -25,4 +23,4 @@ log.warn("init routes");
 require("./src/routes/index")(app);
 
 // 5. 启动服务
-app.listen(port, () => log.warn("Server listening on port " + port));
+app.listen(port, () => log.warn(`Server listening on port ${port}`));

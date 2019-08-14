@@ -1,15 +1,16 @@
 const createError = require("http-errors");
-const constant  = require("./constant");
-const db        = require("./db");
+const constant    = require("./constant");
+const db          = require("./db");
 
 class Model {
   constructor(code, name, scheme) {
-    let conn = db.createConnection(code);
+    const conn = db.createConnection(code);
     this.m = conn.model(name, scheme);
   }
 
   async create(obj) {
     try {
+      // eslint-disable-next-line new-cap
       return await new this.m(obj).save();
     } catch (err) {
       throw new createError.InternalServerError(__("common.db.create.error"));
@@ -84,9 +85,9 @@ class Model {
   }
 
   async getList(condition, projection,
-                skip = constant.MOD_FIND_DEFAULT_SKIP,
-                limit = constant.MOD_FIND_DEFAULT_LIMIT,
-                sort = "") {
+    skip = constant.MOD_FIND_DEFAULT_SKIP,
+    limit = constant.MOD_FIND_DEFAULT_LIMIT,
+    sort = "") {
     try {
       return await  this.m.find(condition)
         .select(projection)

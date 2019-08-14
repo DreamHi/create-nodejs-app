@@ -4,16 +4,15 @@ const crypto      = require("crypto");
 const config      = require("../../config/app");
 
 exports.ip = () => {
-
   if (global.addresses) {
     return global.addresses;
   }
 
-  let interfaces = os.networkInterfaces()
-    , addresses = [];
+  const interfaces = os.networkInterfaces();
+  const addresses = [];
 
-  _.each(interfaces, function(item) {
-    _.each(item, function(address) {
+  _.each(interfaces, (item) => {
+    _.each(item, (address) => {
       if (address.family === "IPv4" && !address.internal) {
         addresses.push(address.address);
       }

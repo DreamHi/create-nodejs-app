@@ -10,7 +10,6 @@ const log4js         = require("log4js");
 const log            = require("./logger");
 
 module.exports = (app) => {
-
   app.use(helmet());
   app.use(compression());
   app.use(responseTime());
@@ -27,13 +26,13 @@ module.exports = (app) => {
   i18n.configure({
     locales:["en", "ja", "zh"],
     defaultLocale: "zh",
-    directory: process.cwd() + "/locales"
+    directory: `${process.cwd()}/locales`,
   });
   i18n.setLocale("zh");
 
   global.__ = i18n.__;
   app.use(i18n.init);
-  
+
   // override with the X-HTTP-Method-Override header in the request
   app.use(methodOverride("X-HTTP-Method"));          // Microsoft
   app.use(methodOverride("X-HTTP-Method-Override")); // Google/GData

@@ -7,8 +7,8 @@ const log         = require("../core/logger");
 const ctrlUser    = require("../modules/system/controllers/ctrl_user");
 
 const appName  = config.name;
-module.exports = function(app) {
 
+module.exports = (app) => {
   app.post(`/${appName}/login`, async (req, res) => {
     try {
       const result = await ctrlUser.simpleLogin(req);
