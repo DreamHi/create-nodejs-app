@@ -60,7 +60,6 @@ class Model {
   }
 
   async get(id, projection = "") {
-    this.m.findById(id, projection);
     try {
       return await this.m.findById(id, projection).exec();
     } catch (err) {
